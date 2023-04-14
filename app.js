@@ -4,12 +4,18 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+
+var cors = require("cors");
+
+const compression = require('compression');
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
 
 // view engine setup
+app.use(cors());
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
@@ -26,6 +32,16 @@ app.use('/users', usersRouter);
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
+app.use(compression({
+  level: 1,
+  filter: (req, res) => {
+      if (req.header['x-no-compression']) {
+          return false
+      }
+      return compression.filter(req, res)
+  },
+}))
 
 // error handler
 app.use(function(err, req, res, next) {

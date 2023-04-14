@@ -1,0 +1,19 @@
+require("dotenv").config();
+
+const encrypt = require('./encrypt');
+
+
+function GetHome(page, callback) {
+    var milliseconds = new Date().getTime().toString();
+    var code = milliseconds.substring(0, 10);
+    var Hash = `ctime=${code}page=${page}version=1.9.24`;
+    var sign = encrypt.getHmac512(process.env.HOMEPAGE+encrypt.getHash256(Hash), "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW");
+    callback(process.env.DOMAIN + process.env.HOMEPAGE + `?page=${page}&ctime=${code}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
+}
+
+
+
+
+module.exports = {
+    GetHome: GetHome
+};

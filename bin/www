@@ -8,13 +8,16 @@ var app = require('../app');
 var debug = require('debug')('popcornapp:server');
 var http = require('http');
 
+var Port = '3000';
+
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || Port);
+console.log("Start at back end web at port " + `http://localhost:${Port}`);
+console.log("Get Music Page: " + `http://localhost:${Port}/page?page=2`);
 app.set('port', port);
-
 /**
  * Create HTTP server.
  */
