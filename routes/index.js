@@ -8,6 +8,7 @@ var axios = require('axios');
 const security = require("../config/security");
 const e = require('express');
 var homeLink = security.GetHome;
+var playList = security.GetPaylist;
 
 var NewConcept = security.GetNewConcept;
 var VideoLink = security.GetVideo;
@@ -38,11 +39,15 @@ async function getData(url, callback) {
 
 async function GetMusicPage(page, callback) {
   var playList = [];
+
+
   homeLink(page, async function (link) {
     await getData(link, async function (data) {
       const listMusic = data.data.items;
+
       for (let i in listMusic) {
         const ms = listMusic[i];
+<<<<<<< HEAD
 
         if (ms.sectionType == 'banner') {
           playList.push({
@@ -60,6 +65,9 @@ async function GetMusicPage(page, callback) {
           });
         }
 
+=======
+        
+>>>>>>> f8191610f0ddd166fadbb09cf8069115fbbf192f
         if (ms.sectionType == 'playlist') {
           playList.push({
             "tilte": ms.title,
@@ -76,7 +84,10 @@ async function GetMusicPage(page, callback) {
 
         }
       }
+
     });
+
+
     callback(playList);
   });
 }
@@ -189,6 +200,7 @@ router.get('/page', function (req, res, next) {
 });
 
 
+<<<<<<< HEAD
 router.get('/video', function (req, res, next) {
   try {
 
@@ -206,6 +218,23 @@ router.get('/video', function (req, res, next) {
         res.status(200).json(response);
       });
     });
+=======
+router.get('/playlist', function (req, res, next) {
+  try {
+    const id = req.query.id;
+    playList(id, async function (url) {
+      await getData(url, async function (data) {
+        const response = {
+          value: id,
+          mp3_link: url,
+          mp3_data: data
+        };
+          
+        res.status(200).json(response);
+      });
+  
+    })
+>>>>>>> f8191610f0ddd166fadbb09cf8069115fbbf192f
 
   } catch (err) {
     console.log(err);
@@ -216,6 +245,7 @@ router.get('/video', function (req, res, next) {
 
 
 
+<<<<<<< HEAD
 router.get('/mp3', function (req, res, next) {
   try {
     const code = req.query.id;
@@ -297,3 +327,6 @@ router.get('/album', function (req, res, next) {
 
 
 module.exports = router;
+=======
+module.exports = router;
+>>>>>>> f8191610f0ddd166fadbb09cf8069115fbbf192f
