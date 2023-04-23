@@ -47,8 +47,6 @@ async function GetMusicPage(page, callback) {
 
       for (let i in listMusic) {
         const ms = listMusic[i];
-<<<<<<< HEAD
-
         if (ms.sectionType == 'banner') {
           playList.push({
             "tilte": ms.title,
@@ -65,9 +63,6 @@ async function GetMusicPage(page, callback) {
           });
         }
 
-=======
-        
->>>>>>> f8191610f0ddd166fadbb09cf8069115fbbf192f
         if (ms.sectionType == 'playlist') {
           playList.push({
             "tilte": ms.title,
@@ -200,25 +195,6 @@ router.get('/page', function (req, res, next) {
 });
 
 
-<<<<<<< HEAD
-router.get('/video', function (req, res, next) {
-  try {
-
-    const idVideo = req.query.id;
-    VideoLink(idVideo, async function (link) {
-      // console.log(link);
-      await getData(link, async function (data) {
-        const videoData = data.data;
-
-        const response = {
-          status: "success",
-          HasVideo: true,
-          video: videoData.streaming.mp4['720p']
-        };
-        res.status(200).json(response);
-      });
-    });
-=======
 router.get('/playlist', function (req, res, next) {
   try {
     const id = req.query.id;
@@ -234,7 +210,6 @@ router.get('/playlist', function (req, res, next) {
       });
   
     })
->>>>>>> f8191610f0ddd166fadbb09cf8069115fbbf192f
 
   } catch (err) {
     console.log(err);
@@ -244,8 +219,6 @@ router.get('/playlist', function (req, res, next) {
 
 
 
-
-<<<<<<< HEAD
 router.get('/mp3', function (req, res, next) {
   try {
     const code = req.query.id;
@@ -323,10 +296,4 @@ router.get('/album', function (req, res, next) {
   }
 });
 
-
-
-
 module.exports = router;
-=======
-module.exports = router;
->>>>>>> f8191610f0ddd166fadbb09cf8069115fbbf192f

@@ -7,18 +7,10 @@ const encrypt = require('./encrypt');
 
 function GetHome(page, callback) {
     var milliseconds = new Date().getTime().toString();
-<<<<<<< HEAD
     var code = milliseconds.substring(0, 10);
     var Hash = `ctime=${code}page=${page}version=1.9.24`;
     var sign = encrypt.getHmac512(process.env.HOMEPAGE + encrypt.getHash256(Hash), "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW");
     callback(process.env.DOMAIN + process.env.HOMEPAGE + `?page=${page}&ctime=${code}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
-=======
-    var ctime = milliseconds.substring(0, 10);
-    var Hash = `ctime=${ctime}page=${page}version=1.9.24`;
-
-    var sign = encrypt.getHmac512(process.env.HOMEPAGE+encrypt.getHash256(Hash), process.env.SECRETKEY);
-    callback(process.env.DOMAIN + process.env.HOMEPAGE + `?page=${page}&ctime=${ctime}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
->>>>>>> f8191610f0ddd166fadbb09cf8069115fbbf192f
 }
 
 function GetArtist(alias, callback) {
@@ -29,7 +21,7 @@ function GetArtist(alias, callback) {
     callback(process.env.DOMAIN + process.env.ARTIST + `?alias=${alias}&ctime=${code}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
 }
 
-<<<<<<< HEAD
+
 function GetNewConcept(type, callback) {
     var milliseconds = new Date().getTime().toString();
     var code = milliseconds.substring(0, 10);
@@ -68,7 +60,9 @@ function getLyrick(id, callback) {
     var Hash = `ctime=${code}id=${id}version=1.9.24`;
     var sign = encrypt.getHmac512(process.env.LYRICK + encrypt.getHash256(Hash), "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW");
     callback(process.env.DOMAIN + process.env.LYRICK + `?id=${id}&ctime=${code}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
-=======
+}
+
+
 function GetPaylist(id, callback){
     var milliseconds = new Date().getTime().toString();
     var ctime = milliseconds.substring(0, 10);
@@ -77,8 +71,6 @@ function GetPaylist(id, callback){
 
     var sign = encrypt.getHmac512(process.env.PLAYLIST+encrypt.getHash256(Hash), process.env.SECRETKEY);
     callback(process.env.DOMAIN + process.env.PLAYLIST + `?id=${id}&ctime=${ctime}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
-
->>>>>>> f8191610f0ddd166fadbb09cf8069115fbbf192f
 }
 
 
