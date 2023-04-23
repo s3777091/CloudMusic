@@ -7,13 +7,65 @@ function GetHome(page, callback) {
     var milliseconds = new Date().getTime().toString();
     var code = milliseconds.substring(0, 10);
     var Hash = `ctime=${code}page=${page}version=1.9.24`;
-    var sign = encrypt.getHmac512(process.env.HOMEPAGE+encrypt.getHash256(Hash), "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW");
+    var sign = encrypt.getHmac512(process.env.HOMEPAGE + encrypt.getHash256(Hash), "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW");
     callback(process.env.DOMAIN + process.env.HOMEPAGE + `?page=${page}&ctime=${code}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
 }
 
+function GetArtist(alias, callback) {
+    var milliseconds = new Date().getTime().toString();
+    var code = milliseconds.substring(0, 10);
+    var Hash = `ctime=${code}version=1.9.24`;
+    var sign = encrypt.getHmac512(process.env.ARTIST + encrypt.getHash256(Hash), "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW");
+    callback(process.env.DOMAIN + process.env.ARTIST + `?alias=${alias}&ctime=${code}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
+}
 
+function GetNewConcept(type, callback) {
+    var milliseconds = new Date().getTime().toString();
+    var code = milliseconds.substring(0, 10);
+    var Hash = `ctime=${code}type=${type}version=1.9.24`;
+    var sign = encrypt.getHmac512(process.env.NEWCONCEPT + encrypt.getHash256(Hash), "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW");
+    callback(process.env.DOMAIN + process.env.NEWCONCEPT + `?type=${type}&ctime=${code}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
+}
+
+function GetVideo(id, callback) {
+    var milliseconds = new Date().getTime().toString();
+    var code = milliseconds.substring(0, 10);
+    var Hash = `ctime=${code}id=${id}version=1.9.24`;
+    var sign = encrypt.getHmac512(process.env.VIDEO + encrypt.getHash256(Hash), "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW");
+    callback(process.env.DOMAIN + process.env.VIDEO + `?id=${id}&ctime=${code}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
+}
+
+function getAlbum(id, callback) {
+    var milliseconds = new Date().getTime().toString();
+    var code = milliseconds.substring(0, 10);
+    var Hash = `ctime=${code}id=${id}version=1.9.24`;
+    var sign = encrypt.getHmac512(process.env.ALBUM + encrypt.getHash256(Hash), "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW");
+    callback(process.env.DOMAIN + process.env.ALBUM + `?id=${id}&ctime=${code}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
+}
+
+function getStream(id, callback) {
+    var milliseconds = new Date().getTime().toString();
+    var code = milliseconds.substring(0, 10);
+    var Hash = `ctime=${code}id=${id}version=1.9.24`;
+    var sign = encrypt.getHmac512(process.env.MP3 + encrypt.getHash256(Hash), "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW");
+    callback(process.env.DOMAIN + process.env.MP3 + `?id=${id}&ctime=${code}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
+}
+
+function getLyrick(id, callback) {
+    var milliseconds = new Date().getTime().toString();
+    var code = milliseconds.substring(0, 10);
+    var Hash = `ctime=${code}id=${id}version=1.9.24`;
+    var sign = encrypt.getHmac512(process.env.LYRICK + encrypt.getHash256(Hash), "acOrvUS15XRW2o9JksiK1KgQ6Vbds8ZW");
+    callback(process.env.DOMAIN + process.env.LYRICK + `?id=${id}&ctime=${code}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
+}
 
 
 module.exports = {
-    GetHome: GetHome
+    GetHome: GetHome,
+    GetArtist: GetArtist,
+    GetNewConcept: GetNewConcept,
+    GetVideo: GetVideo,
+    getAlbum: getAlbum,
+    getStream: getStream,
+    getLyrick: getLyrick
 };
