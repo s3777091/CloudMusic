@@ -2,7 +2,12 @@ require("dotenv").config();
 
 const encrypt = require('./encrypt');
 
-
+function gethashString(){
+    var milliseconds = new Date().getTime().toString();
+    var ctime = milliseconds.substring(0, 10);
+    var Hash = `ctime=${ctime}page=${page}version=1.9.24`;
+    return  Hash;
+}
 
 
 function GetHome(page, callback) {
@@ -26,8 +31,41 @@ function GetPaylist(id, callback){
 
 }
 
+function Search(query,typestring,callback,ver){
+    var encoded_query = encodeURI(query);
+    var milliseconds = new Date().getTime().toString();
+    var ctime = milliseconds.substring(0, 10);
+    var Hash = `ctime=${ctime}page=${page}version=1.9.24`;
+    var sign = encrypt.getHmac512(process.env.PLAYLIST+encrypt.getHash256(Hash), process.env.SECRETKEY);
+    callback(process.env.DOMAIN + process.env.SEARCH + `?q=${encoded_query}&type=${typestring}&page=1&count=18&ctime=${ctime}&version=${ver}&sig=${sign}&apiKey=${process.env.APIKEY}`);
+}
+
+function SearchSongs(query,callback,){
+    Search(query,"song",callback,process.env.SEARCHSONGSVERSION);
+}
+
+function SearchPlaylists(query,callback){
+    Search(query,"playlist",callback,process.env.SEARCHPLAYLISTVERION);
+}
+
+function SearchArtists(query,callback){
+    Search(query,"artist",callback,process.env.SEARCHVIDEOVERSION);
+}
+
+function SearchMV(query,callback){
+    Search(query,"video",callback,process.env.SEARCHPLAYLISTVERSION);
+}
+
+function SearchMulti(query,callback){
+    Search(query,"multi",callback,process.env.SEARCHMULTIVERSION);
+}
 
 module.exports = {
     GetHome: GetHome,
-    GetPaylist: GetPaylist
+    GetPaylist: GetPaylist,
+    SearchSongs:SearchSongs,
+    SearchPlaylists:SearchPlaylists,
+    SearchArtists:SearchArtists,
+    SearchMV:SearchMV
+
 };

@@ -8,6 +8,7 @@ var axios = require('axios');
 const security = require("../config/security");
 var homeLink = security.GetHome;
 var playList = security.GetPaylist;
+var searchSongs = security.SearchSongs;
 
 async function getData(url, callback) {
   try {
@@ -101,6 +102,30 @@ router.get('/playlist', function (req, res, next) {
   try {
     const id = req.query.id;
     playList(id, async function (url) {
+      await getData(url, async function (data) {
+        const response = {
+          value: id,
+          mp3_link: url,
+          mp3_data: data
+        };
+          
+        res.status(200).json(response);
+      });
+  
+    })
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+});
+
+// search routers
+
+router.get('/search/songs', function (req, res, next) {
+  try {
+    const query = req.query.q;
+    searchSongs(query, async function (url) {
       await getData(url, async function (data) {
         const response = {
           value: id,
