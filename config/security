@@ -76,14 +76,11 @@ function GetPaylist(id, callback){
 
 module.exports = {
     GetHome: GetHome,
-<<<<<<< HEAD
     GetArtist: GetArtist,
     GetNewConcept: GetNewConcept,
     GetVideo: GetVideo,
     getAlbum: getAlbum,
     getStream: getStream,
-    getLyrick: getLyrick
-=======
+    getLyrick: getLyrick,
     GetPaylist: GetPaylist
->>>>>>> f8191610f0ddd166fadbb09cf8069115fbbf192f
 };

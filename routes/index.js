@@ -226,10 +226,11 @@ router.get('/mp3', function (req, res, next) {
       // console.log(link);
       await getData(link, async function (data) {
         const mp3 = data.data;
+        
         const response = {
-          mp3_128: mp3['128'],
-          mp3_320: mp3['320'],
-          mp3_lossless: mp3.lossless
+          mp3_128: mp3['128'] || "",
+          mp3_320: mp3['320'] || "",
+          mp3_lossless: mp3.lossless || ""
         };
         res.status(200).json(response);
       });
@@ -262,10 +263,27 @@ router.get('/lyrick', function (req, res, next) {
 });
 
 
+async function getAlbum(listSong) {
+  try {
+    var Song = [];
+    for(let h in listSong.items){
+      const net = listSong.items[h];
+      Song.push({
+        id: net.encodeId,
+        artwork: net.thumbnailM,
+        title: net.title,
+        artist: net.artistsNames,
+        duration: net.duration,
+      })
+    }
+    return Song;
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 
-
-
+// ZOCIIUWW
 router.get('/album', function (req, res, next) {
   try {
     const encode = req.query.id;
@@ -284,7 +302,7 @@ router.get('/album', function (req, res, next) {
           artistsNames: album.artistsNames,
           releaseDate: album.releaseDate,
           description: album.description,
-          song: album.song
+          song: await getAlbum(album.song)
         };
         res.status(200).json(response);
       });
