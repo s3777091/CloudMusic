@@ -7,15 +7,18 @@ var axios = require('axios');
 
 const security = require("../config/security");
 const e = require('express');
+
+
+
 var homeLink = security.GetHome;
 var playList = security.GetPaylist;
-
 var NewConcept = security.GetNewConcept;
 var VideoLink = security.GetVideo;
 var AlbumLink = security.getAlbum;
 var StreamLink = security.getStream;
 var LyrickLink = security.getLyrick;
-
+var HubLink = security.GetHub;
+var ArtistLink = security.GetArtist;
 
 
 async function getData(url, callback) {
@@ -86,7 +89,6 @@ async function GetMusicPage(page, callback) {
     callback(playList);
   });
 }
-
 
 
 
@@ -287,6 +289,8 @@ async function getAlbum(listSong) {
 router.get('/album', function (req, res, next) {
   try {
     const encode = req.query.id;
+
+    
     AlbumLink(encode, async function (link) {
       // console.log(link);
       await getData(link, async function (data) {
@@ -313,5 +317,93 @@ router.get('/album', function (req, res, next) {
     res.status(500).json({ error: true, message: "Internal Server Error" });
   }
 });
+
+// ZOCIIUWW
+router.get('/artist', function (req, res, next) {
+  try {
+
+    var Data = [];
+    const alias = req.query.alias;
+    ArtistLink(alias, async function (link) {
+      await getData(link, async function (data) {
+
+        const art = data.data;
+        for (let h in art.sections) {
+          const ne = art.sections[h];
+          if(ne.sectionType == 'song'){
+            Data.push({
+              type: ne.sectionType,
+              title: ne.title,
+              song: ne.items
+            })
+          }
+
+          if(ne.sectionType == 'playlist'){
+            Data.push({
+              type: ne.sectionType,
+              title: ne.title,
+              items: ne.items
+            })
+          }
+
+          if(ne.sectionType == 'artist'){
+            Data.push({
+              type: ne.sectionType,
+              title: ne.title,
+              items: ne.items
+            })
+          }
+
+        }
+
+        const response = {
+          status: "success",
+          name: art.name,
+          cover: art.cover,
+          thumbnail: art.thumbnailM,
+          sortBiography: art.sortBiography,
+          totalFollow: art.totalFollow,
+          follow: art.follow,
+          sections: Data
+        };
+        res.status(200).json(response);        
+      });
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+});
+
+
+router.get('/hub', function (req, res, next) {
+  try {
+    HubLink(async function (link) {
+      await getData(link, async function (data) {
+        const hub = data.data;
+        const response = {
+          status: "success",
+          banner: hub.banners,
+          featured: hub.featured,
+          topTopic: hub.topTopic,
+          topic: hub.topic,
+          nations: hub.nations,
+          genre: hub.genre
+        };
+        res.status(200).json(response); 
+
+      });
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+});
+
+
+
+
 
 module.exports = router;
