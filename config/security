@@ -35,9 +35,9 @@ function Search(query,typestring,callback,ver){
     var encoded_query = encodeURI(query);
     var milliseconds = new Date().getTime().toString();
     var ctime = milliseconds.substring(0, 10);
-    var Hash = `ctime=${ctime}page=${page}version=1.9.24`;
-    var sign = encrypt.getHmac512(process.env.PLAYLIST+encrypt.getHash256(Hash), process.env.SECRETKEY);
-    callback(process.env.DOMAIN + process.env.SEARCH + `?q=${encoded_query}&type=${typestring}&page=1&count=18&ctime=${ctime}&version=${ver}&sig=${sign}&apiKey=${process.env.APIKEY}`);
+    var Hash = `ctime=${ctime}&q=${encoded_query}&type=${typestring}&page=1&count=18&version=1.9.24`;
+    var sign = encrypt.getHmac512(process.env.SEARCH+encrypt.getHash256(Hash), process.env.SECRETKEY);
+    callback(process.env.DOMAIN + process.env.SEARCH + `?q=${encoded_query}&type=${typestring}&page=1&count=18&ctime=${ctime}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
 }
 
 function SearchSongs(query,callback,){

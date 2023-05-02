@@ -128,10 +128,10 @@ router.get('/search/songs', function (req, res, next) {
     searchSongs(query, async function (url) {
       await getData(url, async function (data) {
         const response = {
-          value: id,
           mp3_link: url,
           mp3_data: data
         };
+        console.log(response);
           
         res.status(200).json(response);
       });
