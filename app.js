@@ -14,6 +14,9 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
+// connect to user database (MySQL RDS)
+const db = require("./module/db");
+
 // view engine setup
 app.use(cors());
 app.set('views', path.join(__dirname, 'views'));
