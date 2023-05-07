@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 
 
-
 const crypto = require('crypto');
 
 var database = require("../module/db");
@@ -39,7 +38,6 @@ router.post('/login', async function (req, res, next) {
   });
 });
 
-
 const addUser = async (name, pwd, email) => {
   const password = crypto.createHash('sha256').update(pwd).digest('hex')
   var Sql = `
@@ -71,8 +69,6 @@ router.post('/register', async function (req, res, next) {
 
   });
 });
-
-
 
 
 

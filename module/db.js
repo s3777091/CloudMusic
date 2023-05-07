@@ -1,6 +1,5 @@
 var mysql = require("mysql");
 
-
 var config = {
     host: 'cloudmusic-user-db.cy6mjxluekwg.ap-southeast-1.rds.amazonaws.com',
     user: 'admin',
