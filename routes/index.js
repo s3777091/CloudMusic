@@ -18,7 +18,10 @@ var AlbumLink = security.getAlbum;
 var StreamLink = security.getStream;
 var LyrickLink = security.getLyrick;
 var HubLink = security.GetHub;
+var HubDetailLink = security.getHubDetail;
 var ArtistLink = security.GetArtist;
+var SearchLink = security.GetSearch;
+
 
 
 async function getData(url, callback) {
@@ -207,10 +210,10 @@ router.get('/playlist', function (req, res, next) {
           mp3_link: url,
           mp3_data: data
         };
-          
+
         res.status(200).json(response);
       });
-  
+
     })
 
   } catch (err) {
@@ -228,7 +231,7 @@ router.get('/mp3', function (req, res, next) {
       // console.log(link);
       await getData(link, async function (data) {
         const mp3 = data.data;
-        
+
         const response = {
           mp3_128: mp3['128'] || "",
           mp3_320: mp3['320'] || "",
@@ -268,7 +271,7 @@ router.get('/lyrick', function (req, res, next) {
 async function getAlbum(listSong) {
   try {
     var Song = [];
-    for(let h in listSong.items){
+    for (let h in listSong.items) {
       const net = listSong.items[h];
       Song.push({
         id: net.encodeId,
@@ -290,7 +293,7 @@ router.get('/album', function (req, res, next) {
   try {
     const encode = req.query.id;
 
-    
+
     AlbumLink(encode, async function (link) {
       // console.log(link);
       await getData(link, async function (data) {
@@ -298,7 +301,7 @@ router.get('/album', function (req, res, next) {
         const response = {
           status: "success",
           title: album.title,
-          encodeId:  album.encodeId,
+          encodeId: album.encodeId,
           thumbnail: album.thumbnail,
           thumbnailM: album.thumbnailM,
           genres: album.genres,
@@ -330,7 +333,7 @@ router.get('/artist', function (req, res, next) {
         const art = data.data;
         for (let h in art.sections) {
           const ne = art.sections[h];
-          if(ne.sectionType == 'song'){
+          if (ne.sectionType == 'song') {
             Data.push({
               type: ne.sectionType,
               title: ne.title,
@@ -338,7 +341,7 @@ router.get('/artist', function (req, res, next) {
             })
           }
 
-          if(ne.sectionType == 'playlist'){
+          if (ne.sectionType == 'playlist') {
             Data.push({
               type: ne.sectionType,
               title: ne.title,
@@ -346,7 +349,7 @@ router.get('/artist', function (req, res, next) {
             })
           }
 
-          if(ne.sectionType == 'artist'){
+          if (ne.sectionType == 'artist') {
             Data.push({
               type: ne.sectionType,
               title: ne.title,
@@ -366,7 +369,7 @@ router.get('/artist', function (req, res, next) {
           follow: art.follow,
           sections: Data
         };
-        res.status(200).json(response);        
+        res.status(200).json(response);
       });
     });
 
@@ -391,7 +394,28 @@ router.get('/hub', function (req, res, next) {
           nations: hub.nations,
           genre: hub.genre
         };
-        res.status(200).json(response); 
+        res.status(200).json(response);
+
+      });
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+});
+
+router.get('/hub/detail', function (req, res, next) {
+  try {
+    const id = req.query.id;
+    HubDetailLink(id, async function (link) {
+      await getData(link, async function (data) {
+        const HubDetail = data.data;
+        const response = {
+          status: "success",
+          playList: HubDetail.sections[0].items
+        };
+        res.status(200).json(response);
 
       });
     });
@@ -403,6 +427,29 @@ router.get('/hub', function (req, res, next) {
 });
 
 
+
+router.get('/search', function (req, res, next) {
+  try {
+    const key = req.query.key;
+    SearchLink(key, async function (link) {
+      await getData(link, async function (data) {
+        const ts = data.data;
+        const response = {
+          status: "success",
+          songs: ts.songs || 0,
+          playlists: ts.playlists || 0,
+          artists: ts.artists || 0
+        };
+        res.status(200).json(response);
+
+      });
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+});
 
 
 

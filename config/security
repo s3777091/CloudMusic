@@ -64,9 +64,7 @@ function getLyrick(id, callback) {
 function GetPaylist(id, callback){
     var milliseconds = new Date().getTime().toString();
     var ctime = milliseconds.substring(0, 10);
-
     var Hash = `ctime=${ctime}id=${id}version=1.9.24`;
-
     var sign = encrypt.getHmac512(process.env.PLAYLIST+encrypt.getHash256(Hash), process.env.SECRETKEY);
     callback(process.env.DOMAIN + process.env.PLAYLIST + `?id=${id}&ctime=${ctime}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
 }
@@ -74,10 +72,25 @@ function GetPaylist(id, callback){
 function GetHub(callback) {
     var milliseconds = new Date().getTime().toString();
     var ctime = milliseconds.substring(0, 10);
-
     var Hash = `ctime=${ctime}version=1.9.24`;
     var sign = encrypt.getHmac512(process.env.HUB+encrypt.getHash256(Hash), process.env.SECRETKEY);
     callback(process.env.DOMAIN + process.env.HUB + `?ctime=${ctime}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
+}
+
+function GetSearch(key, callback) {
+    var milliseconds = new Date().getTime().toString();
+    var ctime = milliseconds.substring(0, 10);
+    var Hash = `ctime=${ctime}version=1.9.24`;
+    var sign = encrypt.getHmac512(process.env.SEARCH+encrypt.getHash256(Hash), process.env.SECRETKEY);
+    callback(process.env.DOMAIN + process.env.SEARCH + `?q=${key}&ctime=${ctime}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
+}
+
+function getHubDetail(id, callback){
+    var milliseconds = new Date().getTime().toString();
+    var ctime = milliseconds.substring(0, 10);
+    var Hash = `ctime=${ctime}id=${id}version=1.9.24`;
+    var sign = encrypt.getHmac512(process.env.HUBDETAIL+encrypt.getHash256(Hash), process.env.SECRETKEY);
+    callback(process.env.DOMAIN + process.env.HUBDETAIL + `?id=${id}&ctime=${ctime}&version=1.9.24&sig=${sign}&apiKey=${process.env.APIKEY}`);
 }
 
 module.exports = {
@@ -89,5 +102,7 @@ module.exports = {
     getStream: getStream,
     getLyrick: getLyrick,
     GetPaylist: GetPaylist,
-    GetHub: GetHub
+    GetHub: GetHub,
+    getHubDetail: getHubDetail,
+    GetSearch: GetSearch
 };
