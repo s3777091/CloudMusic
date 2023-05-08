@@ -7,6 +7,8 @@ const crypto = require('crypto');
 var database = require("../module/db");
 var RunQuery = database.RunQuery;
 
+
+
 router.post('/login', async function (req, res, next) {
 
   const email = req.body.email;
@@ -69,7 +71,6 @@ router.post('/register', async function (req, res, next) {
 
   });
 });
-
 
 
 module.exports = router;

@@ -3,7 +3,7 @@ var mysql = require("mysql");
 var config = {
     host: 'cloudmusic-user-db.cy6mjxluekwg.ap-southeast-1.rds.amazonaws.com',
     user: 'admin',
-    password : 'forgroupass!gnment',
+    password: 'forgroupass!gnment',
     database: 'cloud_music',
     sslmode: 'REQUIRED',
     port: '3306'
