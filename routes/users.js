@@ -47,7 +47,21 @@ const addUser = async (name, pwd, email) => {
   RunQuery(Sql, function () {
     
   });
-}
+};
+
+const getSongLike = async (id) => {
+  var Sql = `select * from SongLike where USER_IDX = ${id}`;
+  RunQuery(Sql, function(rows){
+    return rows;
+  });
+};
+
+const getAlbumLike = async (id) => {
+  var Sql = `select * from AlbumLike where USER_IDX = ${id}`;
+  RunQuery(Sql, function(rows){
+    return rows;
+  });
+};
 
 router.post('/register', async function (req, res, next) {
   const name = req.body.name;
@@ -70,6 +84,38 @@ router.post('/register', async function (req, res, next) {
     }
 
   });
+});
+
+router.get('/songlike', async function (){
+  const id = req.query.id;
+  try {
+    getSongLike(id);
+    const response = {
+      status: "success",
+      success: true
+    }; 
+    res.status(200).json(response);
+  }
+  catch (err){
+    console.log(err);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+});
+
+router.get('/albumlike', async function (){
+  const id = req.query.id;
+  try {
+    getAlbumLike(id);
+    const response = {
+      status: "success",
+      success: true
+    }; 
+    res.status(200).json(response);
+  }
+  catch (err){
+    console.log(err);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
 });
 
 
