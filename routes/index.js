@@ -8,6 +8,9 @@ var axios = require('axios');
 const security = require("../config/security");
 const e = require('express');
 
+var database = require("../module/db");
+var RunQuery = database.RunQuery;
+
 
 
 var homeLink = security.GetHome;
@@ -90,6 +93,21 @@ async function GetMusicPage(page, callback) {
 
 
     callback(playList);
+  });
+}
+
+const getSongLike = async (id) => {
+  var Sql = `select * from SongLike where USER_IDX = ${id}`;
+  console.log(id);
+  RunQuery(Sql, function(rows){
+    return rows;
+  });
+}
+
+const getAlbumLike = async (id) => {
+  var Sql = `select * from AlbumLike where USER_IDX = ${id}`;
+  RunQuery(Sql, function(rows){
+    return rows;
   });
 }
 
@@ -446,6 +464,42 @@ router.get('/search', function (req, res, next) {
     });
 
   } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+});
+
+// get song like and album like 
+
+router.get('/songlike', async function (req, res, next){
+  const id = req.query.id;
+  try {
+    var data = getSongLike(id);
+    const response = {
+      status: "success",
+      success: true,
+      data: data
+    }; 
+    res.status(200).json(response);
+  }
+  catch (err){
+    console.log(err);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+});
+
+router.get('/albumlike', async function (req, res, next){
+  const id = req.query.id;
+  try {
+    var data = getAlbumLike(id);
+    const response = {
+      status: "success",
+      success: true,
+      data: data
+    }; 
+    res.status(200).json(response);
+  }
+  catch (err){
     console.log(err);
     res.status(500).json({ error: true, message: "Internal Server Error" });
   }
