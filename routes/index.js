@@ -462,9 +462,10 @@ router.get('/albumlike', async function (req, res, next){
   const id = req.query.id;
   var Sql = `select * from AlbumLike where USER_IDX = ${id}`;
   RunQuery(Sql, function (rows) {
+    var string_row = JSON.stringify(rows);
     const response = {
       status: "success",
-      data: JSON.stringify(rows)
+      data: JSON.parse(string_row)
     };
     res.status(200).json(response);
   });
