@@ -96,20 +96,7 @@ async function GetMusicPage(page, callback) {
   });
 }
 
-const getSongLike = async (id) => {
-  var Sql = `select * from SongLike where USER_IDX = ${id}`;
-  console.log(id);
-  RunQuery(Sql, function(rows){
-    return rows;
-  });
-}
 
-const getAlbumLike = async (id) => {
-  var Sql = `select * from AlbumLike where USER_IDX = ${id}`;
-  RunQuery(Sql, function(rows){
-    return rows;
-  });
-}
 
 
 
@@ -459,7 +446,6 @@ router.get('/search', function (req, res, next) {
           artists: ts.artists || 0
         };
         res.status(200).json(response);
-
       });
     });
 
@@ -471,39 +457,33 @@ router.get('/search', function (req, res, next) {
 
 // get song like and album like 
 
-router.get('/songlike', async function (req, res, next){
-  const id = req.query.id;
-  try {
-    var data = getSongLike(id);
-    const response = {
-      status: "success",
-      success: true,
-      data: data
-    }; 
-    res.status(200).json(response);
-  }
-  catch (err){
-    console.log(err);
-    res.status(500).json({ error: true, message: "Internal Server Error" });
-  }
-});
 
 router.get('/albumlike', async function (req, res, next){
   const id = req.query.id;
-  try {
-    var data = getAlbumLike(id);
+  var Sql = `select * from AlbumLike where USER_IDX = ${id}`;
+  RunQuery(Sql, function (rows) {
     const response = {
       status: "success",
-      success: true,
-      data: data
-    }; 
+      data: JSON.stringify(rows)
+    };
     res.status(200).json(response);
-  }
-  catch (err){
-    console.log(err);
-    res.status(500).json({ error: true, message: "Internal Server Error" });
-  }
+  });
 });
+
+router.get('/songlike', async function (req, res, next){
+  const id = req.query.id;
+  var Sql = `select * from SongLike where USER_IDX = ${id}`;
+  RunQuery(Sql, function (rows) {
+    var string_row = JSON.stringify(rows);
+    const response = {
+      status: "success",
+      data: JSON.parse(string_row)
+    };
+    res.status(200).json(response);
+  });
+});
+
+
 
 
 
