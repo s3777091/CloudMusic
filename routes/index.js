@@ -6,22 +6,17 @@ var axios = require('axios');
 
 
 const security = require("../config/security");
-const e = require('express');
-
-
+const NodeCache = require("node-cache");
+const cache = new NodeCache({ stdTTL: 300, checkperiod: 600 });
 
 var homeLink = security.GetHome;
 var playList = security.GetPaylist;
-var NewConcept = security.GetNewConcept;
-var VideoLink = security.GetVideo;
 var AlbumLink = security.getAlbum;
 var StreamLink = security.getStream;
-var LyrickLink = security.getLyrick;
 var HubLink = security.GetHub;
 var HubDetailLink = security.getHubDetail;
 var ArtistLink = security.GetArtist;
 var SearchLink = security.GetSearch;
-
 
 
 async function getData(url, callback) {
@@ -42,10 +37,8 @@ async function getData(url, callback) {
   }
 }
 
-
 async function GetMusicPage(page, callback) {
   var playList = [];
-
 
   homeLink(page, async function (link) {
     await getData(link, async function (data) {
@@ -93,8 +86,6 @@ async function GetMusicPage(page, callback) {
   });
 }
 
-
-
 /* GET home page. defauls is 1*/
 router.get('/', function (req, res, next) {
   try {
@@ -112,86 +103,24 @@ router.get('/', function (req, res, next) {
   }
 });
 
-
-async function getVideo(id, callback) {
-
-  try {
-    VideoLink(id, async function (url) {
-      await getData(url, async function (data) {
-        const videoData = data.data;
-        playList.push(videoData);
-
-      });
-      callback(playList);
-    })
-
-
-
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-router.get('/new', function (req, res, next) {
-  try {
-    const type = req.query.type;
-
-    var Data = [];
-
-    NewConcept(type, async function (link) {
-      await getData(link, async function (data) {
-        const listMusic = data.data;
-        for (let h in listMusic) {
-          const ne = listMusic[h];
-          if (!ne?.mvlink) {
-            Data.push({
-              title: ne.title,
-              thumbnail: ne.thumbnail,
-              thumbnailM: ne.thumbnailM,
-              encodeId: ne.encodeId,
-              artistsNames: ne.artistsNames,
-              video: '',
-              hasVideo: false,
-            })
-          } else {
-            Data.push({
-              title: ne.title,
-              thumbnail: ne.thumbnail,
-              thumbnailM: ne.thumbnailM,
-              encodeId: ne.encodeId,
-              artistsNames: ne.artistsNames,
-              video: '',
-              hasVideo: true,
-            })
-          }
-        }
-
-        const response = {
-          status: "success",
-          playListHome: Data
-        };
-        res.status(200).json(response);
-      });
-    });
-
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: true, message: "Internal Server Error" });
-  }
-});
-
-
-
 router.get('/page', function (req, res, next) {
   try {
     const page = req.query.page;
+    const cacheKey = `page-${page}`;
+
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return res.status(200).json(cachedData);
+    }
+
     GetMusicPage(page, async function (data) {
       const response = {
         status: "success",
         page: page,
         playListHome: data
       };
-      res.status(200).json(response);
+      cache.set(cacheKey, response);
+      return res.status(200).json(response);
     })
   } catch (err) {
     console.log(err);
@@ -199,10 +128,16 @@ router.get('/page', function (req, res, next) {
   }
 });
 
-
 router.get('/playlist', function (req, res, next) {
   try {
     const id = req.query.id;
+    const cacheKey = `playlist_${id}`;
+
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return res.status(200).json(cachedData);
+    }
+
     playList(id, async function (url) {
       await getData(url, async function (data) {
         const response = {
@@ -210,6 +145,7 @@ router.get('/playlist', function (req, res, next) {
           mp3_link: url,
           mp3_data: data
         };
+        cache.set(cacheKey, response);
 
         res.status(200).json(response);
       });
@@ -222,13 +158,17 @@ router.get('/playlist', function (req, res, next) {
   }
 });
 
-
-
-router.get('/mp3', function (req, res, next) {
+router.get('/mp3', async function (req, res, next) {
   try {
     const code = req.query.id;
+    const cacheKey = `mp3_${code}`;
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      return res.status(200).json(cachedData);
+    }
+
     StreamLink(code, async function (link) {
-      // console.log(link);
       await getData(link, async function (data) {
         const mp3 = data.data;
 
@@ -237,6 +177,8 @@ router.get('/mp3', function (req, res, next) {
           mp3_320: mp3['320'] || "",
           mp3_lossless: mp3.lossless || ""
         };
+
+        cache.set(cacheKey, response);
         res.status(200).json(response);
       });
     });
@@ -246,27 +188,6 @@ router.get('/mp3', function (req, res, next) {
     res.status(500).json({ error: true, message: "Internal Server Error" });
   }
 });
-
-router.get('/lyrick', function (req, res, next) {
-  try {
-    const code = req.query.id;
-    LyrickLink(code, async function (link) {
-      // console.log(link);
-      await getData(link, async function (data) {
-        const lyrick = data.data;
-        const response = {
-          sentences: lyrick.sentences,
-        };
-        res.status(200).json(response);
-      });
-    });
-
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: true, message: "Internal Server Error" });
-  }
-});
-
 
 async function getAlbum(listSong) {
   try {
@@ -287,15 +208,17 @@ async function getAlbum(listSong) {
   }
 }
 
-
-// ZOCIIUWW
-router.get('/album', function (req, res, next) {
+router.get('/album', async function (req, res, next) {
   try {
     const encode = req.query.id;
 
+    const cacheKey = `album-${encode}`;
+    const cachedAlbum = cache.get(cacheKey);
+    if (cachedAlbum) {
+      return res.status(200).json(cachedAlbum);
+    }
 
     AlbumLink(encode, async function (link) {
-      // console.log(link);
       await getData(link, async function (data) {
         const album = data.data;
         const response = {
@@ -311,6 +234,7 @@ router.get('/album', function (req, res, next) {
           description: album.description,
           song: await getAlbum(album.song)
         };
+        cache.set(cacheKey, response);
         res.status(200).json(response);
       });
     });
@@ -322,14 +246,22 @@ router.get('/album', function (req, res, next) {
 });
 
 // ZOCIIUWW
-router.get('/artist', function (req, res, next) {
+router.get('/artist', async function (req, res, next) {
   try {
+    const alias = req.query.alias;
+
+    const cacheKey = `artist:${alias}`;
+    const cachedData = cache.get(cacheKey);
+
+    if (cachedData) {
+      res.status(200).json(cachedData);
+      return;
+    }
 
     var Data = [];
-    const alias = req.query.alias;
+
     ArtistLink(alias, async function (link) {
       await getData(link, async function (data) {
-
         const art = data.data;
         for (let h in art.sections) {
           const ne = art.sections[h];
@@ -356,7 +288,6 @@ router.get('/artist', function (req, res, next) {
               items: ne.items
             })
           }
-
         }
 
         const response = {
@@ -369,10 +300,10 @@ router.get('/artist', function (req, res, next) {
           follow: art.follow,
           sections: Data
         };
+        cache.set(cacheKey, response);
         res.status(200).json(response);
       });
     });
-
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: true, message: "Internal Server Error" });
@@ -380,8 +311,13 @@ router.get('/artist', function (req, res, next) {
 });
 
 
-router.get('/hub', function (req, res, next) {
+router.get('/hub', async function (req, res, next) {
   try {
+    const cachedData = cache.get("hubData");
+    if (cachedData) {
+      return res.status(200).json(cachedData);
+    }
+
     HubLink(async function (link) {
       await getData(link, async function (data) {
         const hub = data.data;
@@ -394,20 +330,28 @@ router.get('/hub', function (req, res, next) {
           nations: hub.nations,
           genre: hub.genre
         };
-        res.status(200).json(response);
 
+        cache.set("hubData", response);
+        res.status(200).json(response);
       });
     });
-
   } catch (err) {
-    console.log(err);
+    console.error(err);
     res.status(500).json({ error: true, message: "Internal Server Error" });
   }
 });
 
+
 router.get('/hub/detail', function (req, res, next) {
   try {
     const id = req.query.id;
+    const cacheKey = `hubDetail_${id}`;
+
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return res.status(200).json(cachedData);
+    }
+    
     HubDetailLink(id, async function (link) {
       await getData(link, async function (data) {
         const HubDetail = data.data;
@@ -415,8 +359,8 @@ router.get('/hub/detail', function (req, res, next) {
           status: "success",
           playList: HubDetail.sections[0].items
         };
+        cache.set(cacheKey, response);
         res.status(200).json(response);
-
       });
     });
 
@@ -425,7 +369,6 @@ router.get('/hub/detail', function (req, res, next) {
     res.status(500).json({ error: true, message: "Internal Server Error" });
   }
 });
-
 
 
 router.get('/search', function (req, res, next) {

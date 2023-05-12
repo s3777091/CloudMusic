@@ -8,14 +8,10 @@ var logger = require('morgan');
 var cors = require("cors");
 
 const compression = require('compression');
-
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
-
-// connect to user database (MySQL RDS)
-const db = require("./module/db");
 
 // view engine setup
 app.use(cors());
@@ -38,7 +34,9 @@ app.use(function(req, res, next) {
 });
 
 app.use(compression({
-  level: 1,
+  level: 6, // set compression level to 6 (default is 6)
+  threshold: 1000, // set minimum response size to compress (default is 1kb)
+  memLevel: 8,
   filter: (req, res) => {
       if (req.header['x-no-compression']) {
           return false

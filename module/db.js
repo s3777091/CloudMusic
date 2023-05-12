@@ -1,10 +1,12 @@
 var mysql = require("mysql");
 
+
+//This one for cloud
 var config = {
-    host: 'cloudmusic-user-db.cy6mjxluekwg.ap-southeast-1.rds.amazonaws.com',
-    user: 'admin',
-    password: 'forgroupass!gnment',
-    database: 'cloud_music',
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
     sslmode: 'REQUIRED',
     port: '3306'
 };
