@@ -484,8 +484,51 @@ router.get('/songlike', async function (req, res, next){
   });
 });
 
+// post album and song like 
+router.post('/songlike',async function (req,res, next){
+  const encodeid = req.body.encodeid;
+  const image = req.body.image;
+  const name = req.body.name;
+  const artist = req.body.artist;
+  const songurl = req.body.songurl;
+  const user_idx = req.body.user_idx;
+
+  var Sql = `insert into SongLike (encodeid,image,name,artist,songurl,user_idx) values ('${encodeid}','${image}','${name}','${artist}','${songurl}','${user_idx}')`;
+  console.log(Sql);
+  try {
+    RunQuery(Sql, function () {});
+    const response = {
+      status: "success"
+    };
+    res.status(200).json(response);
+  }
+  catch (err){
+    console.log(err);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+  })
 
 
+router.post('/albumlike',async function (req,res, next){
+  const encodeid = req.body.encodeid;
+  const image = req.body.image;
+  const name = req.body.name;
+  const artist = req.body.artist;
+  const user_idx = req.body.user_idx;
+
+  var Sql = `INSERT INTO AlbumLike (encodeid,image,name,artist,user_idx) VALUES ('${encodeid}','${image}','${name}','${artist}','${user_idx}')`;
+  try {
+    RunQuery(Sql, function () {});
+    const response = {
+      status: "success"
+    };
+    res.status(200).json(response);
+  }
+  catch (err){
+    console.log(err);
+    res.status(500).json({ error: true, message: "Internal Server Error" });
+  }
+  })
 
 
 module.exports = router;
