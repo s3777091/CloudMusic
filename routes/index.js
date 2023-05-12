@@ -27,6 +27,7 @@ async function getData(url, callback) {
       url: url,
       headers: {
         Accept: "application/json",
+        
         cookie: `${response.headers['set-cookie'][0]};zpsid=${process.env.ZPSID};zmp3_sid=${process.env.SID}`
       }
     });
@@ -161,31 +162,25 @@ router.get('/playlist', function (req, res, next) {
 router.get('/mp3', async function (req, res, next) {
   try {
     const code = req.query.id;
-    const cacheKey = `mp3_${code}`;
-    const cachedData = cache.get(cacheKey);
-
-    if (cachedData) {
-      return res.status(200).json(cachedData);
-    }
-
     StreamLink(code, async function (link) {
+      console.log(link);
       await getData(link, async function (data) {
         const mp3 = data.data;
-
+        console.log(mp3);
         const response = {
           mp3_128: mp3['128'] || "",
           mp3_320: mp3['320'] || "",
           mp3_lossless: mp3.lossless || ""
         };
 
-        cache.set(cacheKey, response);
+        // console.log(response);
+
         res.status(200).json(response);
       });
     });
-
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: true, message: "Internal Server Error" });
+    res.status(500).json({ error: true, message: err });
   }
 });
 
