@@ -33,7 +33,8 @@ router.post('/login', async function (req, res, next) {
         Email: rows[0].Email,
         Avatar: rows[0].Avatar,
         isActive: rows[0].isActive,
-        isLogin: rows[0].isLogin
+        isLogin: rows[0].isLogin,
+        idx : rows[0].idx
       };
       res.status(200).json(response);
     }
