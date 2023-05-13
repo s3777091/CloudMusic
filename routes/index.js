@@ -87,21 +87,8 @@ async function GetMusicPage(page, callback) {
   });
 }
 
-/* GET home page. defauls is 1*/
 router.get('/', function (req, res, next) {
-  try {
-    GetMusicPage("1", async function (data) {
-      const response = {
-        status: "success",
-        playListHome: data
-      };
-      res.status(200).json(response);
-    })
-
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: true, message: "Internal Server Error" });
-  }
+  res.render('index');
 });
 
 router.get('/page', function (req, res, next) {
